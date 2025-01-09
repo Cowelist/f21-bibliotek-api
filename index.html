@@ -4,19 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="script.js"></script>
+    <script src="script.js" type="module"></script>
 </head>
 <body>
-    <div class="countainer">
+    <div class="login countainer">
         <div class="Login">
             <div class="Username">
-                <input type="text" id="InUser">
+                <input type="text" placeholder="Username" id="InUser">
+                
             </div>
             <div class="Password">
-                <input type="text" id="InPass">
-                <button id="Button">Click</button>
+                <input type="text" placeholder="Password" id="InPass">
+                <input type="submit" onclick="login_click()">
             </div>
         </div>
     </div>
+
+
 </body>
-</html>
+</html> 
+
