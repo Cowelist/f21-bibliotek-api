@@ -25,7 +25,6 @@ function database_connection() {
     const mysql = require('mysql2');
     let login_connection = mysql.createConnection({
         host: host,
-        user: Username,
         password: password,
         database: database
     });
