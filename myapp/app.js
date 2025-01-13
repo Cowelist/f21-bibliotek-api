@@ -1,14 +1,14 @@
-const express = require ('express');
-const app = express()
-const port = 3064
+// const express = require ('express');
+// const app = express()
+// const port = 3064
 
-app.get('/', (req, res) => {
-    res.send('Hello bob')
-})
+// app.get('/', (req, res) => {
+//     res.send('Hello bob')
+// })
 
-app.listen(port, () => {
-    console.log(`Example app available on http://localhost:${port}`)
-})
+// app.listen(port, () => {
+//     console.log(`Example app available on http://localhost:${port}`)
+// })
 
 
 class Database {
@@ -25,7 +25,7 @@ class Database {
     connection(username, pass) {
         console.log(this.username)
         const host = ('localhost')
-        const database = ('F21_bibliotek')
+        const database = ('F21_Bibliotek')
         const mysql = require('mysql2');
         let login_connection = mysql.createConnection({
             host: host,
@@ -34,22 +34,32 @@ class Database {
             database: database
              
         });
+        this.connDB =login_connection
+    }
+    error_handling(){
+        const express = require('express');
+        const mysql = require('mysql2');
 
-        login_connection.connect(error => {
+        const app = express(); 
+        const port = 5000;
+        
+        this.connection()
+        this.login_connection
+
+        this.connDB.connect(error => {
             if (error){
                 console.log('A error has been occured'
                     + 'while connecting to database.');
                     throw error;
+
+        }
+            app.listen(port, '192.168.1.21', ()=>{
+                console.log(`Database connected on ${port}`);
+                console.log(`Example app available on http://192.168.1.21:${port}`)
             }
-          
-        }) 
+    )} 
 
-
-        // login_connection.connect(function(err){
-        //     if (err) throw err;
-        //     console.log('Connected!');
-    // })
-    }
+    )};
     test(username, pass) {
         this.username = username; 
         this.pass = pass;
@@ -61,5 +71,6 @@ class Database {
 
 
 const run = new Database();
-run.connection();
+run.error_handling();
 //run.test('1A.Bibliotekar', '1A');
+
