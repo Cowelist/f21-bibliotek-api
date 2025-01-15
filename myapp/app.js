@@ -38,7 +38,8 @@ class Database {
     }
     error_handling(){
         const express = require('express');
-        const mysql = require('mysql2');
+        //const mysql = require('mysql2');
+        const ip = '192.168.1.21'
 
         const app = express(); 
         const port = 5000;
@@ -53,7 +54,7 @@ class Database {
                     throw error;
 
         }
-            app.listen(port, '192.168.1.21', ()=>{
+            app.listen(port, ip, ()=>{
                 console.log(`Database connected on ${port}`);
                 console.log(`Example app available on http://192.168.1.21:${port}`)
             }
