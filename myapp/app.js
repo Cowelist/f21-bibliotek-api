@@ -1,32 +1,14 @@
-// const express = require ('express');
-// const app = express()
-// const port = 3064
-
-// app.get('/', (req, res) => {
-//     res.send('Hello bob')
-// })
-
-// app.listen(port, () => {
-//     console.log(`Example app available on http://localhost:${port}`)
-// })
-
-
-class Database {
-    trigger_activation(username){
-        //username = document.getElementById('InUser')
-        //this.username = ("Hei")
-        console.log(`Hei, ${this.username}`)
-        // pass = document.getElementById('InPass')
-        // console.log(username)
-        // test()
-        // return Username && password && database_connection();
+class Database_connection {
+    
+    not_call(){
+        //this.app = express();
     }
-
-    connection(username, pass) {
+    connection() {
         console.log(this.username)
         const host = ('localhost')
         const database = ('F21_Bibliotek')
         const mysql = require('mysql2');
+
         let login_connection = mysql.createConnection({
             host: host,
             user: "1A.Bibliotekar",//this.username,
@@ -34,44 +16,55 @@ class Database {
             database: database
              
         });
-        this.connDB =login_connection
-    }
-    error_handling(){
+
         const express = require('express');
-        //const mysql = require('mysql2');
         const ip = '192.168.1.21'
-
-        const app = express(); 
+        this.app = express();
         const port = 5000;
-        
-        this.connection()
-        this.login_connection
 
-        this.connDB.connect(error => {
+        login_connection.connect(error => {
             if (error){
                 console.log('A error has been occured'
                     + 'while connecting to database.');
                     throw error;
 
         }
-            app.listen(port, ip, ()=>{
+            this.app.listen(port, ip, ()=>{
                 console.log(`Database connected on ${port}`);
                 console.log(`Example app available on http://192.168.1.21:${port}`)
             }
     )} 
 
     )};
-    test(username, pass) {
-        this.username = username; 
-        this.pass = pass;
-        // console.log(`Hei, ${this.username}`)
-        // console.log(`Hei, ${this.pass}`)
-        this.connection()
+
+    file_connect() {
+        const express = require('express');
+        const path = require('path');
+
+        //app.use(express.static(path.join(__dirname, 'public')));
+        console.log('Jeg hatter livet mitt')
+        this.app.get('/', (req, res) => {
+            console.log("Hei")
+            res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+            console.log("QWERTYU")
+        });
+
+        this.app.use(express.urlencoded({ extended: true}));
+
+        // app.post('/submit', (req, res) => {
+        //     const { InUser } = req.body;
+        //     console.log('test')
+        // })
+
+    };
     }
-}
 
 
-const run = new Database();
-run.error_handling();
+
+
+const run = new Database_connection();
+run.connection();
+run.file_connect();
 //run.test('1A.Bibliotekar', '1A');
 
+//redline 
