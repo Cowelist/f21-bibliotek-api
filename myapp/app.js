@@ -68,5 +68,3 @@ run.file_connect();
 //run.test('1A.Bibliotekar', '1A');
 
 //redline 
-
-const why = ("Why those tthis not worwkrarwa")
