@@ -1,22 +1,16 @@
+require('dotenv').config()
 class Database_connection {
     
-    not_call(){
-        //this.app = express();
-    }
     connection() {
         console.log(this.username)
-        const host = ('localhost')
-        const database = ('F21_Bibliotek')
         const mysql = require('mysql2');
-
         let login_connection = mysql.createConnection({
-            host: host,
-            user: "1A.Bibliotekar",//this.username,
-            password: "1A",//this.pass,
-            database: database
+            host: process.env.DB_HOST,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_DATABASE,
              
         });
-
         const express = require('express');
         const ip = '192.168.1.21'
         this.app = express();
@@ -27,7 +21,6 @@ class Database_connection {
                 console.log('A error has been occured'
                     + 'while connecting to database.');
                     throw error;
-
         }
             this.app.listen(port, ip, ()=>{
                 console.log(`Database connected on ${port}`);
@@ -42,22 +35,26 @@ class Database_connection {
         const path = require('path');
 
         //app.use(express.static(path.join(__dirname, 'public')));
-        console.log('Jeg hatter livet mitt')
         this.app.get('/', (req, res) => {
-            console.log("Hei")
             res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
-            console.log("QWERTYU")
+            // login_form();
         });
+        
+        this.app.get('/submit', (req, res) => {
+            const username = req.query.Username;
+            const password = req.query.Password;
+            res.send(`Hei`)
+            console.log(`${username}`)
+            console.log(`${password}`)
+        })
 
         this.app.use(express.urlencoded({ extended: true}));
-
-        // app.post('/submit', (req, res) => {
-        //     const { InUser } = req.body;
-        //     console.log('test')
-        // })
-
     };
     }
+class Web_connection{
+
+}
+
 
 
 
