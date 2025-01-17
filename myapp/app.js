@@ -1,19 +1,20 @@
 require('dotenv').config()
+
 class Database_connection {
     
     connection() {
         console.log(this.username)
         const mysql = require('mysql2');
         let login_connection = mysql.createConnection({
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_DATABASE,
-             
+            host: process.env.H_DB_HOST,
+            user: process.env.H_DB_USER,
+            password: process.env.H_DB_PASSWORD,
+            database: process.env.H_DB_DATABASE,
         });
-        const express = require('express');
-        const ip = '192.168.1.21'
-        this.app = express();
+        this.express = require('express');
+        const ip = process.env.IP;
+        const h_ip = process.env.H_IP
+        this.app = this.express();
         const port = 5000;
 
         login_connection.connect(error => {
@@ -22,16 +23,17 @@ class Database_connection {
                     + 'while connecting to database.');
                     throw error;
         }
-            this.app.listen(port, ip, ()=>{
+            this.app.listen(port, h_ip, ()=>{
                 console.log(`Database connected on ${port}`);
-                console.log(`Example app available on http://192.168.1.21:${port}`)
+                console.log(`Example app available on http://${h_ip}:${port}`)
+                console.log(`${ip}`)
             }
     )} 
-
-    )};
+    
+    )
+    };
 
     file_connect() {
-        const express = require('express');
         const path = require('path');
 
         //app.use(express.static(path.join(__dirname, 'public')));
@@ -48,16 +50,13 @@ class Database_connection {
             console.log(`${password}`)
         })
 
-        this.app.use(express.urlencoded({ extended: true}));
+        this.app.use(this.express.urlencoded({ extended: true}));
     };
+
+    transfer(){
+        return  a = 1
     }
-class Web_connection{
-
-}
-
-
-
-
+    }
 
 const run = new Database_connection();
 run.connection();
@@ -65,3 +64,7 @@ run.file_connect();
 //run.test('1A.Bibliotekar', '1A');
 
 //redline 
+
+//require('./web_server');
+
+module.exports = Database_connection;
