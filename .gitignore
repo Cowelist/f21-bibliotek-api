@@ -1,3 +1,4 @@
 /myapp/node_modules
 /venv
 /myapp/.env
+/windows_venv
