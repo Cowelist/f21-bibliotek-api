@@ -1,19 +1,20 @@
 require('dotenv').config()
 
+
 class Database_connection {
     
     connection() {
         console.log(this.username)
         const mysql = require('mysql2');
         let login_connection = mysql.createConnection({
-            host: process.env.H_DB_HOST,
-            user: process.env.H_DB_USER,
-            password: process.env.H_DB_PASSWORD,
-            database: process.env.H_DB_DATABASE,
+            host: process.env.UH_DB_HOST,
+            user: process.env.UH_DB_USER,
+            password: process.env.UH_DB_PASSWORD,
+            database: process.env.UH_DB_DATABASE,
         });
         this.express = require('express');
         const ip = process.env.IP;
-        const h_ip = process.env.H_IP
+        const h_ip = process.env.UH_IP
         this.app = this.express();
         const port = 5000;
 
@@ -68,3 +69,5 @@ run.file_connect();
 //require('./web_server');
 
 module.exports = Database_connection;
+
+//xdg-open http://example.com
