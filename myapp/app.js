@@ -1,3 +1,5 @@
+const { pathToFileURL } = require('url');
+
 require('dotenv').config()
 
 
@@ -37,6 +39,9 @@ class Database_connection {
     file_connect() {
         const path = require('path');
 
+        this.app.use
+
+
         //app.use(express.static(path.join(__dirname, 'public')));
         this.app.get('/', (req, res) => {
             res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
@@ -46,7 +51,8 @@ class Database_connection {
         this.app.get('/submit', (req, res) => {
             const username = req.query.Username;
             const password = req.query.Password;
-            res.send(`Hei`)
+            res.sendFile(path.join(__dirname, '..', 'public', 'submit.html'));
+           // res.send(`Hei2`);
             console.log(`${username}`)
             console.log(`${password}`)
         })
