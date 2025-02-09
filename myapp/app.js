@@ -8,7 +8,7 @@ require('dotenv').config()
 
 
 class Database_connection {
-
+    
     connection() {
         console.log(this.username)
         const mysql = require('mysql2');
@@ -22,6 +22,7 @@ class Database_connection {
         const ip = process.env.IP;
         const h_ip = process.env.UH_IP
         this.app = this.express();
+        this.app.use(this.express.json());
         const port = 5000;
 
         this.login_connection.connect(error => {
@@ -30,6 +31,7 @@ class Database_connection {
                     + 'while connecting to database.');
                     throw error;
         }
+       
             this.app.listen(port, h_ip, ()=>{
                 console.log(`Database connected on ${port}`);
                 console.log(`Example app available on http://${h_ip}:${port}`)
@@ -38,6 +40,25 @@ class Database_connection {
     )} 
     
     )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     };
 
     file_connect() {
@@ -50,6 +71,7 @@ class Database_connection {
         //app.use(express.static(path.join(__dirname, 'public')));
         this.app.get('/', (req, res) => {
             res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+            console.log("Noe fungerer");
             // login_form();
         });
         
@@ -99,33 +121,48 @@ class Database_connection {
             });
         });
     }
-    Brukere(){
-        const jwt = require('jsonwebtoke');
-        const bcrypt = require('bcryptjs');
-        this.app.post('/login', (req, res) => {
+        async Brukere(req, res){
+            console.log("FUngerer 50/50")
+            const jwt = require('jsonwebtoken');
+            const bcrypt = require('bcryptjs');
+            this.app.post('/login', (req, res) => {
+            console.log("Login req kjører")
             const {Brukernavn, Passord } = req.body;
 
             this.login_connection.query('SELECT * FROM Brukere WHERE Brukernavn = ?', [Brukernavn], async (err, results) => {
-                if (err) return res.status(500).json({ error: 'Database error'});
-                if (results.lenght === 0) return res.status(401).json({ error: 'Bruker finnes ikke'});
+                if (err) {
+                    //return res.status(500).json({ error: 'Database error'});
+                    return res.send('<p>Database error</p>');
+                }
+                if (results.length== 0) {
+                    //return res.status(401).json({ error: 'Bruker finnes ikke'});
+                    return res.send('<p>Brukernavn finnes ikke</p>');
+                }
 
                 const bruker = results[0];
                 const passordMatch = await bcrypt.compare(Passord, bruker.Passord);
 
-                if (!passordMatch) return res.status(401).json({ error: 'Feil passord'});
+                if (!passordMatch){
+                    //return res.status(401).json({ error: 'Feil passord'});
+                    return res.send('<p>Feil passord</p>');
+                }
                 res.json({ message:' Logget inn'});
+
+                const token = jwt.sign({ Brukernavn: bruker.brukernavn, rolle: bruker.rolle}, SECRET_KEY, { expiresIN: "1h"});
+
+                res.json({ message: "logget Inn", token, rolle: bruker.rolle});
             });
         });
-    }
-    }
+        }
+}
 
 
 
 
-    
 const run = new Database_connection();
 run.connection();
 run.file_connect();
+run.Brukere();
 //run.test('1A.Bibliotekar', '1A');
 
 //redline 
@@ -135,3 +172,4 @@ run.file_connect();
 module.exports = Database_connection;
 
 //xdg-open http://example.com
+//we
