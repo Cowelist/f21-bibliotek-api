@@ -4,18 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="script.js" type="module"></script>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="../request/server_con.js" defer></script>
+
 </head>
 <body>
-    <form action="/submit" method="GET">
-    <div class="login countainer">
+    <form id="loginform">
+    <div class="login coutainer">
         <div class="Login">
-                <input type="text" placeholder="Username" id="Username" name="Username">
-                <input type="text" placeholder="Password" id="Password" name="Password">
-                <input type="submit">
-            </div>
+                <label>Brukernavn</label>
+                <input type="text" placeholder="Username" id="Brukernavn" name="Username">
+                <br>
+                <label>Passord</label>
+                <input type="password" placeholder="Password" id="Passord" name="Password">
+                <br>
+                <button type="submit">Login</button>
         </div>
     </div>
+    <p id="Tilbake_melding"></p>
 </form>
 
 </body>

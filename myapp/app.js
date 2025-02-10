@@ -1,4 +1,5 @@
 const { publicDecrypt } = require('crypto');
+const path = require('path');
 const { pathToFileURL } = require('url');
 
 require('dotenv').config()
@@ -18,11 +19,16 @@ class Database_connection {
             password: process.env.UH_DB_PASSWORD,
             database: process.env.UH_DB_DATABASE,
         });
+        this.cors = require('cors');
         this.express = require('express');
-        const ip = process.env.IP;
-        const h_ip = process.env.UH_IP
+
         this.app = this.express();
         this.app.use(this.express.json());
+        this.app.use(this.cors());
+        this.app.use(this.express.static(path.join(__dirname, '..', 'request')));;
+
+        const ip = process.env.IP;
+        const h_ip = process.env.UH_IP
         const port = 5000;
 
         this.login_connection.connect(error => {
@@ -41,31 +47,13 @@ class Database_connection {
     
     )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     };
 
     file_connect() {
-        const cors = require('cors');
+       
         const path = require('path');
 
-        this.app.use(cors());
+        
 
 
         //app.use(express.static(path.join(__dirname, 'public')));

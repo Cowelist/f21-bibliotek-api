@@ -12,11 +12,15 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
+    "mime": "^4.0.6",
     "mysql2": "^3.12.0",
-    "nodeman": "^1.1.2"
+    "path": "^0.12.7",
+    "semver": "^7.7.1",
+    "url": "^0.11.4"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
