@@ -4,3 +4,4 @@
 /windows_venv
 myapp/node_modules/nodemon
 myapp/node_modules/.bin/mime
+/myapp/node_modules
