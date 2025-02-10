@@ -21,11 +21,17 @@ class Database_connection {
         });
         this.cors = require('cors');
         this.express = require('express');
+        this.session = require('express-session')
 
         this.app = this.express();
         this.app.use(this.express.json());
         this.app.use(this.cors());
         this.app.use(this.express.static(path.join(__dirname, '..', 'request')));;
+        // this.app.use(this.session, {
+        //     SECRET_KEY: "oWEho#+32Jbwlrpj",
+        //     resave: false,
+        //     save: false
+        // })
 
         const ip = process.env.IP;
         const h_ip = process.env.UH_IP
@@ -114,32 +120,43 @@ class Database_connection {
             const jwt = require('jsonwebtoken');
             const bcrypt = require('bcryptjs');
             this.app.post('/login', (req, res) => {
-            console.log("Login req kjører")
-            const {Brukernavn, Passord } = req.body;
+                console.log("Login req kjører")
+                const {Username, Passord } = req.body;
 
-            this.login_connection.query('SELECT * FROM Brukere WHERE Brukernavn = ?', [Brukernavn], async (err, results) => {
-                if (err) {
-                    //return res.status(500).json({ error: 'Database error'});
-                    return res.send('<p>Database error</p>');
-                }
-                if (results.length== 0) {
-                    //return res.status(401).json({ error: 'Bruker finnes ikke'});
-                    return res.send('<p>Brukernavn finnes ikke</p>');
-                }
+// Snakker med db
+                this.login_connection.query('SELECT * FROM Brukere WHERE Brukernavn = ?', [Username], async (err, results) => {
+                    console.log(results)
+                    console.log(req.body)
 
-                const bruker = results[0];
-                const passordMatch = await bcrypt.compare(Passord, bruker.Passord);
+                    
+                    if (err) {
+                        //return res.status(500).json({ error: 'Database error'});
+                        return res.send('<p>Database error</p>');
+                    }
+                    if (results.length== 0) {
+                        //return res.status(401).json({ error: 'Bruker finnes ikke'});
+                        return res.send('<p>Brukernavn finnes ikke</p>');
+                    }
+                    
+// Pass comp
+                    const bruker = results[0];
+                    console.log(bruker.Passord)
+                    console.log(Passord)
+                    const passordMatch = await bcrypt.compare(Passord, bruker.Passord);
+                    //req.session.userid = results [0].BrukerID;
+                    console.log("Logget in")
+                    console.log(passordMatch)
 
-                if (!passordMatch){
-                    //return res.status(401).json({ error: 'Feil passord'});
-                    return res.send('<p>Feil passord</p>');
-                }
-                res.json({ message:' Logget inn'});
+                    if (!passordMatch){
+                        //return res.status(401).json({ error: 'Feil passord'});
+                        return res.send('<p>Feil passord</p>');
+                    }
+                    res.json({ message:' Logget inn'});
 
-                const token = jwt.sign({ Brukernavn: bruker.brukernavn, rolle: bruker.rolle}, SECRET_KEY, { expiresIN: "1h"});
+                    const token = jwt.sign({ Brukernavn: bruker.Username, rolle: bruker.rolle}, SECRET_KEY, { expiresIN: "1h"});
 
-                res.json({ message: "logget Inn", token, rolle: bruker.rolle});
-            });
+                    res.json({ message: "logget Inn", token, rolle: bruker.rolle});
+                });
         });
         }
 }
