@@ -119,13 +119,16 @@ class Database_connection {
             console.log("FUngerer 50/50")
             const jwt = require('jsonwebtoken');
             const bcrypt = require('bcryptjs');
+            const fs = require('fs');
             this.app.post('/login', (req, res) => {
-                console.log("Login req kjører")
-                const {Username, Passord } = req.body;
+                const {Username, Password } = req.body;
+                //const SECRET_KEY = process.env.SEC_KEY
+                const privatekey = fs.readFileSync('private.pem', 'utf8');
+                const publicKey = fs.readFileSync('public.pem', 'utf8');
 
 // Snakker med db
                 this.login_connection.query('SELECT * FROM Brukere WHERE Brukernavn = ?', [Username], async (err, results) => {
-                    console.log(results)
+                    //console.log(results)
                     console.log(req.body)
 
                     
@@ -140,22 +143,36 @@ class Database_connection {
                     
 // Pass comp
                     const bruker = results[0];
-                    console.log(bruker.Passord)
-                    console.log(Passord)
-                    const passordMatch = await bcrypt.compare(Passord, bruker.Passord);
+                    //console.log(bruker.Passord)
+                    console.log(Username)
+                    console.log(Password)
+                    const passordMatch = await bcrypt.compare(Password, bruker.Passord);
                     //req.session.userid = results [0].BrukerID;
-                    console.log("Logget in")
-                    console.log(passordMatch)
+                   // console.log(passordMatch)
+                    console.log(bruker)
 
                     if (!passordMatch){
-                        //return res.status(401).json({ error: 'Feil passord'});
-                        return res.send('<p>Feil passord</p>');
+                       // return res.status(401).json({ error: 'Feil passord'});
+                        return res.send('<p>Feil passord</p>');   // }
                     }
-                    res.json({ message:' Logget inn'});
 
-                    const token = jwt.sign({ Brukernavn: bruker.Username, rolle: bruker.rolle}, SECRET_KEY, { expiresIN: "1h"});
+                    res.json({ message:'Logget inn'});
+                    const token = jwt.sign({ Brukernavn: bruker.Username, Rolle: bruker.Rolle}, privatekey, { 
+                        algorithm: "RS256",
+                        expiresIn: "1h"});
 
-                    res.json({ message: "logget Inn", token, rolle: bruker.rolle});
+                    console.log(token)
+
+                    try{
+                        const decode = jwt.verify(token, publicKey);
+                        console.log("decode", decode)
+                    }
+                    catch (err){
+                        console.error(err.message)
+                    
+                    }
+
+                    //res.json({ message: "logget Inn", token, rolle: bruker.rolle});
                 });
         });
         }

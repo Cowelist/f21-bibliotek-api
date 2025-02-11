@@ -5,3 +5,5 @@
 myapp/node_modules/nodemon
 myapp/node_modules/.bin/mime
 /myapp/node_modules
+myapp/private.pem
+myapp/public.pem

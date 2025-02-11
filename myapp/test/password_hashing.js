@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 
 // Example password to hash
-const plainPassword = 'Admin';
+const plainPassword = 'otgdrodrmt';
 
 // Salt rounds define the complexity of the hashing process (the higher the number, the more secure but slower)
 const saltRounds = 1;
