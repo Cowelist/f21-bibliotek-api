@@ -1,30 +1,40 @@
-import config from "./config.js";
-console.log("Blir kalt på")
-document.getElementById("loginForm").addEventListener("submit", async function(event) {
-    event.preventDefault(); // Prevent form from reloading the page
-
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
-    try {
-        const response = await fetch(`${config.API_URL}/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password }) // Send username & password as JSON
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            document.getElementById("message").innerText = "Logget inn!";
-            localStorage.setItem("token", data.token); // Store JWT token
-            localStorage.setItem("role", data.role);   // Store user role
-            setTimeout(() => { window.location.href = "dashboard.html"; }, 1000);
-        } else {
-            document.getElementById("message").innerText = "Fungerte ikke " + data.error;
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        document.getElementById("message").innerText = "Server Error";
+console.log("Server_con.js blir kalt på")
+async function Autorisasjon(){ //Sender en req til rout.. for å se om token er valid. Dette gjør den når siden oppdateres eller blir først åpnet
+    const response = await fetch('/login');
+    if (response.ok){
+        loadside();
     }
-});
+}
+
+async function login(){
+    const brukernavn = document.getElementById("Brukernavn").value;
+    const passord = document.getElementById("Passord").value;
+
+    const response = await fetch('/login',{
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'}, //Forteller serveren at du sender json data
+        body: JSON.stringify({brukernavn, passord}),
+        credentials: "include" //Forteller nettlesern at den skal bruke cookies
+
+    });
+    if (response.ok){ //om valid så gjør den en refresh på siden ellers error melding
+        location.reload(); 
+    }
+    else {
+        const data = await response.json();
+        document.getElementById("Error").innerText = data.message;
+    }
+}
+
+async function loadside(){ //Fungerer som Autorisasjon bare at den endrer inhold på siden ovenfor å se om brukeren har en token selv om den også ser etter tokens.
+    const response = await fetch("/login");
+    if(response.ok){
+        const data = await response.json();
+        document.getElementById("content").innerHTML = data.content;
+    }
+}
+
+function logout(){
+    const time = new Data().toLocaleString();
+    document.cookie = `Token er utløpte: ${time}`
+}

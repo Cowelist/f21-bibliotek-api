@@ -3,8 +3,9 @@ const path = require('path');
 const { pathToFileURL } = require('url');
 
 require('dotenv').config()
-//require('')
 
+const verifyToken = require('../Security_Authentication/token_authentication.js');
+const router_authentication = require('../Security_Authentication/rout_authentication.js');
 
 
 
@@ -21,12 +22,15 @@ class Database_connection {
         });
         this.cors = require('cors');
         this.express = require('express');
-        this.session = require('express-session')
+        this.session = require('express-session');
+        this.cokie = require('cookie-parser');
 
         this.app = this.express();
         this.app.use(this.express.json());
         this.app.use(this.cors());
+        this.app.use(this.cokie());
         this.app.use(this.express.static(path.join(__dirname, '..', 'request')));;
+        //this.app.use('/rout_authentication.js', verifyToken, router_authentication)
         // this.app.use(this.session, {
         //     SECRET_KEY: "oWEho#+32Jbwlrpj",
         //     resave: false,
@@ -59,9 +63,6 @@ class Database_connection {
        
         const path = require('path');
 
-        
-
-
         //app.use(express.static(path.join(__dirname, 'public')));
         this.app.get('/', (req, res) => {
             res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
@@ -69,53 +70,21 @@ class Database_connection {
             // login_form();
         });
         
-        this.app.get('/submit', (req, res) => {
-            const username = req.query.Username;
-            const password = req.query.Password;
-            res.sendFile(path.join(__dirname, '..', 'public', 'submit.html'));
-            console.log(`${username}`)
-            console.log(`${password}`)
-        })
+    
+        
+   //     this.app.get('/submit', (req, res) => {
+    //        const username = req.query.Username;
+      //      const password = req.query.Password;
+        //    res.sendFile(path.join(__dirname, '..', 'public', 'submit.html'));
+          //  console.log(`${username}`)
+            //console.log(`${password}`)
+  //      })
 
         this.app.use(this.express.urlencoded({ extended: true}));
     };
 
-    Request(){
-        this.app.post('/add-bok', (req,res) => {
-            const {Forfatter, Sjanger, Publiserings_dato, Spraak, Bok_Tittel} = req.body;
 
-            if (!Sjanger || !Publiserings_dato || !Spraak || !Bok_Tittel) {
-                return res.status(400).json({ error: "Fyll ut Sjanger, Publisering_dato, spraak og Bok_Tittel"});
-            }
-          
-            const sql = 'INSERT INTO bok_data (Forfatter, Sjanger, Publiserings_dato, Spraak, Bok_Tittel) VALUES (?, ?, ?, ?, ?)';
-            this.login_connection(sql, [Forfatter, Sjanger, Publiserings_dato, Spraak, Bok_Tittel], (err, result) => {
-                if (err) {
-                    console.error('Error av lagring bok i databasen', err);
-                    res.status(500).json({ error: 'Database error' });
-                } 
-                else {
-                    res.status(201).json({
-                        message: 'Boka ble lagt til i databasen',
-                        user: {Forfatter, Sjanger, Publiserings_dato, Spraak, Bok_Tittel}
-                    });
-                }
-            });
-        });
-        this.app.get('/Bok', (req, res) => {
-            const sql = 'SELECT * FROM Bok_data';
-            this.login_connection(sql, (err, results) => {
-                if (err){
-                    console.error('Error med å hente data fra databasen', err);
-                    res.status(500).json({ error: 'Database error' });
-                } 
-                else {
-                    res.json(results);
-                }
-            });
-        });
-    }
-        async Brukere(req, res){
+    async Brukere(req, res){
             console.log("FUngerer 50/50")
             const jwt = require('jsonwebtoken');
             const bcrypt = require('bcryptjs');
@@ -144,19 +113,17 @@ class Database_connection {
 // Pass comp
                     const bruker = results[0];
                     //console.log(bruker.Passord)
-                    console.log(Username)
-                    console.log(Password)
                     const passordMatch = await bcrypt.compare(Password, bruker.Passord);
                     //req.session.userid = results [0].BrukerID;
                    // console.log(passordMatch)
-                    console.log(bruker)
+                    //console.log(bruker)
 
                     if (!passordMatch){
                        // return res.status(401).json({ error: 'Feil passord'});
                         return res.send('<p>Feil passord</p>');   // }
                     }
-
-                    res.json({ message:'Logget inn'});
+// Token gen and check
+                    
                     const token = jwt.sign({ Brukernavn: bruker.Username, Rolle: bruker.Rolle}, privatekey, { 
                         algorithm: "RS256",
                         expiresIn: "1h"});
@@ -165,16 +132,33 @@ class Database_connection {
 
                     try{
                         const decode = jwt.verify(token, publicKey);
-                        console.log("decode", decode)
+                        console.log("decode", )//decode)
+                        
+                        
                     }
                     catch (err){
                         console.error(err.message)
                     
                     }
+// Genererer cookie                    
+                    res.cookie('auth_token', token,{
+                        httpOnly: true,
+                        sameSite: 'Strict',
+                        maxAge: 3600000 //1 time
+                    });
+                    console.log("Logget inn")
+                    res.json({ message:'Logget inn'});
 
-                    //res.json({ message: "logget Inn", token, rolle: bruker.rolle});
+                   
+
                 });
+                
         });
+        this.app.use('/home', verifyToken, router_authentication)
+   //         this.app.get('/home', verifyToken, (req, res) =>{
+  //              console.log("Ruter burde bli aktivert");
+ //               res.json({content: "Ruter er aktivert"});
+//            });  
         }
 }
 
