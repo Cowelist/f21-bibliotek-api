@@ -4,8 +4,7 @@ const { pathToFileURL } = require('url');
 
 require('dotenv').config()
 
-const verifyToken = require('../Security_Authentication/token_authentication.js');
-const router_authentication = require('../Security_Authentication/rout_authentication.js');
+
 
 
 
@@ -24,12 +23,17 @@ class Database_connection {
         this.express = require('express');
         this.session = require('express-session');
         this.cokie = require('cookie-parser');
+        this.verifyToken = require('../Security_Authentication/token_authentication.js');
+        this.router_authentication = require('../Security_Authentication/rout_authentication.js');
 
         this.app = this.express();
         this.app.use(this.express.json());
         this.app.use(this.cors());
         this.app.use(this.cokie());
         this.app.use(this.express.static(path.join(__dirname, '..', 'request')));;
+
+
+  
         //this.app.use('/rout_authentication.js', verifyToken, router_authentication)
         // this.app.use(this.session, {
         //     SECRET_KEY: "oWEho#+32Jbwlrpj",
@@ -63,12 +67,23 @@ class Database_connection {
        
         const path = require('path');
 
-        //app.use(express.static(path.join(__dirname, 'public')));
+        this.app.set('views', path.join(__dirname, '../public'))
+        this.app.set('view engine', 'ejs');
+
+        this.app.use(this.express.static(path.join(__dirname, '../style')));
+
         this.app.get('/', (req, res) => {
-            res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+            res.render('index');//(path.join(__dirname, '..', 'public', 'index.ejs'));
             console.log("Noe fungerer");
             // login_form();
         });
+
+        this.app.get('/home', (req, res) => {
+            res.render('home');//(path.join(__dirname, '..', 'public', 'index.ejs'));
+            console.log("Noe fungerer2");
+            // login_form();
+        });
+
         
     
         
@@ -89,16 +104,22 @@ class Database_connection {
             const jwt = require('jsonwebtoken');
             const bcrypt = require('bcryptjs');
             const fs = require('fs');
+            
+
+      //      this.app.use('/', this.verifyToken, this.router_authentication)
             this.app.post('/login', (req, res) => {
+                
                 const {Username, Password } = req.body;
                 //const SECRET_KEY = process.env.SEC_KEY
                 const privatekey = fs.readFileSync('private.pem', 'utf8');
                 const publicKey = fs.readFileSync('public.pem', 'utf8');
+                
 
 // Snakker med db
                 this.login_connection.query('SELECT * FROM Brukere WHERE Brukernavn = ?', [Username], async (err, results) => {
                     //console.log(results)
                     console.log(req.body)
+                    
 
                     
                     if (err) {
@@ -128,12 +149,14 @@ class Database_connection {
                         algorithm: "RS256",
                         expiresIn: "1h"});
 
+                        
+
                     console.log(token)
 
                     try{
                         const decode = jwt.verify(token, publicKey);
                         console.log("decode", )//decode)
-                        
+                        this.app.use('/', this.verifyToken, this.router_authentication)
                         
                     }
                     catch (err){
@@ -149,17 +172,19 @@ class Database_connection {
                     console.log("Logget inn")
                     res.json({ message:'Logget inn'});
 
-                   
+                    const run = new Database_connection();
+                    run.verify(); 
 
                 });
                 
-        });
-        this.app.use('/home', verifyToken, router_authentication)
-   //         this.app.get('/home', verifyToken, (req, res) =>{
-  //              console.log("Ruter burde bli aktivert");
- //               res.json({content: "Ruter er aktivert"});
-//            });  
+        });    
         }
+    verify(){
+        this.app.get('/', this.verifyToken, (req, res) =>{
+            console.log("Ruter burde bli aktivert");
+            res.json({content: "Ruter er aktivert"});
+        });
+    }
 }
 
 
@@ -169,6 +194,7 @@ const run = new Database_connection();
 run.connection();
 run.file_connect();
 run.Brukere();
+run.verify();
 //run.test('1A.Bibliotekar', '1A');
 
 //redline 
