@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
+console.log("Token fil blir åpna")
 const publicKey = fs.readFileSync('../myapp/public.pem', 'utf8');
 
 function verifyToken(req, res, next){ //sjekker om token er valid 
@@ -15,12 +16,12 @@ function verifyToken(req, res, next){ //sjekker om token er valid
     //        return res.status(401).send('Token har utløpt');
             console.log("Token har utløpt")
         }
-        consoel.log("token er klart og kører selve siden nå")
+        consolel.log("token er klart og kører selve siden nå")
         req.user = decode;
         next();
     })
 }
 
-console.log("token kjører")
+
 
 module.exports = verifyToken;

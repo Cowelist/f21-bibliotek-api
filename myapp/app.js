@@ -31,6 +31,7 @@ class Database_connection {
         this.app.use(this.cors());
         this.app.use(this.cokie());
         this.app.use(this.express.static(path.join(__dirname, '..', 'request')));;
+        
 
 
   
@@ -149,14 +150,14 @@ class Database_connection {
                         algorithm: "RS256",
                         expiresIn: "1h"});
 
-                        
+                    
 
-                    console.log(token)
+//                    console.log(token)
 
                     try{
                         const decode = jwt.verify(token, publicKey);
                         console.log("decode", )//decode)
-                        this.app.use('/', this.verifyToken, this.router_authentication)
+                        
                         
                     }
                     catch (err){
@@ -171,16 +172,18 @@ class Database_connection {
                     });
                     console.log("Logget inn")
                     res.json({ message:'Logget inn'});
-
-                    const run = new Database_connection();
-                    run.verify(); 
+                    this.verify();
 
                 });
                 
         });    
         }
     verify(){
-        this.app.get('/', this.verifyToken, (req, res) =>{
+   //     this.app.use('/', this.verifyToken, this.router_authentication)
+        console.log("VerifyToken:", this.verifyToken);
+        console.log("Registered routes:", this.app._router.stack.map(r => r.route && r.route.path));
+
+        this.app.get('/home', this.verifyToken, (req, res) =>{
             console.log("Ruter burde bli aktivert");
             res.json({content: "Ruter er aktivert"});
         });
@@ -194,7 +197,7 @@ const run = new Database_connection();
 run.connection();
 run.file_connect();
 run.Brukere();
-run.verify();
+//run.verify();
 //run.test('1A.Bibliotekar', '1A');
 
 //redline 
