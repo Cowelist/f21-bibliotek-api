@@ -31,6 +31,8 @@ class Database_connection {
         this.app.use(this.cors());
         this.app.use(this.cokie());
         this.app.use(this.express.static(path.join(__dirname, '..', 'request')));;
+        this.app.use(this.verifyToken);
+        
         
 
 
@@ -73,16 +75,21 @@ class Database_connection {
 
         this.app.use(this.express.static(path.join(__dirname, '../style')));
 
-        this.app.get('/', (req, res) => {
+        this.app.get('/login', (req, res) => {
             res.render('index');//(path.join(__dirname, '..', 'public', 'index.ejs'));
             console.log("Noe fungerer");
             // login_form();
         });
+        
 
-        this.app.get('/home', (req, res) => {
-            res.render('home');//(path.join(__dirname, '..', 'public', 'index.ejs'));
-            console.log("Noe fungerer2");
-            // login_form();
+        this.app.get('/home', this.verifyToken, (req, res) =>{
+            console.log("Ruter burde bli aktivert");
+            if (req.user.isAuth) {
+                res.render('home');
+            }
+            else {
+                res.render('index')
+            }
         });
 
         
@@ -171,23 +178,12 @@ class Database_connection {
                         maxAge: 3600000 //1 time
                     });
                     console.log("Logget inn")
-                    res.json({ message:'Logget inn'});
-                    this.verify();
+                    res.render('home');
 
                 });
                 
         });    
         }
-    verify(){
-   //     this.app.use('/', this.verifyToken, this.router_authentication)
-        console.log("VerifyToken:", this.verifyToken);
-        console.log("Registered routes:", this.app._router.stack.map(r => r.route && r.route.path));
-
-        this.app.get('/home', this.verifyToken, (req, res) =>{
-            console.log("Ruter burde bli aktivert");
-            res.json({content: "Ruter er aktivert"});
-        });
-    }
 }
 
 

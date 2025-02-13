@@ -1,10 +1,6 @@
 /myapp/node_modules
 /venv
-/myapp/.env
-/windows_venv
-myapp/node_modules/nodemon
-myapp/node_modules/.bin/mime
-/myapp/node_modules
+/myapp/.env     
+myapp/node_modules
 myapp/private.pem
-myapp/public.pem
-node_modules
+
