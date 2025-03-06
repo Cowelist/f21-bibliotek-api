@@ -4,10 +4,6 @@ const { pathToFileURL } = require('url');
 
 require('dotenv').config()
 
-
-
-
-
 class Database_connection {
     
     connection() {
