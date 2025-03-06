@@ -5,11 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="../handel/bok_handel.js" type="module"></script>
+
+    <script>
+        // Function to send data to the server using POST (for /add-bok)
+        function addBook() {
+            const forfatter = document.getElementById("Forfatter").value;
+            const sjanger = document.getElementById("Sjanger").value;
+            const publiseringsDato = document.getElementById("Publiserings_dato").value;
+            const spraak = document.getElementById("Spraak").value;
+            const bokTittel = document.getElementById("Bok_Tittel").value;
+
+            const data = {
+                Forfatter: forfatter,
+                Sjanger: sjanger,
+                Publiserings_dato: publiseringsDato,
+                Spraak: spraak,
+                Bok_Tittel: bokTittel
+            };
+
+            // Use fetch API to send POST request to backend
+            fetch('/add-bok', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert("Book added successfully!");
+                } else {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        // Function to fetch data from the server using GET (for /Bok)
+        function getBooks() {
+            fetch('/Bok')
+            .then(response => response.json())
+            .then(data => {
+                let bookList = document.getElementById("bookList");
+                bookList.innerHTML = ""; // Clear previous list
+                data.forEach(book => {
+                    let li = document.createElement("li");
+                    li.textContent = `${book.Bok_Tittel} by ${book.Forfatter}`;
+                    bookList.appendChild(li);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
 </head>
 <body>
     <button onclick="window.history.back()">Go Back</button>
     <button onclick="window.location.href='index.html'">Go Back</button>
     <p>Hei</p>
     <button onclick="handel()"></button>
+
+    <form id="bookForm">
+        <label for="Forfatter">Forfatter:</label>
+        <input type="text" id="Forfatter" name="Forfatter" required><br><br>
+
+        <label for="Sjanger">Sjanger:</label>
+        <input type="text" id="Sjanger" name="Sjanger" required><br><br>
+
+        <label for="Publiserings_dato">Publiseringsdato:</label>
+        <input type="date" id="Publiserings_dato" name="Publiserings_dato" required><br><br>
+
+        <label for="Spraak">Språk:</label>
+        <input type="text" id="Spraak" name="Spraak" required><br><br>
+
+        <label for="Bok_Tittel">Boktittel:</label>
+        <input type="text" id="Bok_Tittel" name="Bok_Tittel" required><br><br>
+
+        <button type="submit">Legg til bok</button>
+    </form>
+    
 </body>
 </html>
